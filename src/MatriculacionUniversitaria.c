@@ -1,93 +1,114 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<string.h>
 
-int registro();
-void lectura();
-int ingresar();
+typedef struct {
+    char matricula[10];
+    char contrasena[20];
+} matriculacion;
+
+
+void continuar()
+{
+    printf("Presione una tecla para continuar\n\n");
+    getch();
+    system("cls");
+}
+
+
+void registro()
+{
+    FILE *arch;
+    arch=fopen("usuario.dat","ab");
+    if (arch==NULL)
+        exit(1);
+    matriculacion usuario;
+    fflush(stdin);
+    printf("Ingrese la matricula del usuario:");
+    gets(usuario.matricula);
+    printf("Ingrese la contrasena:");
+    scanf("%s",&usuario.contrasena);
+    fwrite(&usuario, sizeof(matriculacion), 1, arch);
+    fclose(arch);
+    continuar();
+}
+
+
+void listado()
+{
+	fflush(stdin);
+	system("cls");
+    FILE *arch;
+    int numero=1,con,intentos=2,salida=0; 
+    char admin[20];
+    arch=fopen("usuario.dat","rb");
+    if (arch==NULL)
+        exit(1);
+    matriculacion usuario;
+    fread(&usuario, sizeof(matriculacion), 1, arch);
+    printf("\n\tEl listado de matriculas es:\n\n");
+    while(!feof(arch))
+    {
+        printf("Matricula %d: %s \n\n", numero,usuario.matricula);
+        numero++;
+        fread(&usuario, sizeof(matriculacion), 1, arch);
+    }
+    fclose(arch);
+    printf("\n\n Desea ver las contrasenas? \n\t1- Si\n\t2- No\n");
+    scanf("%d",&con);
+    if(con==1){
+    	numero=1;
+    	fflush(stdin);
+    	system("cls");
+    	while(salida!=3){
+    	printf("\nDigite la contrasena de administrador: ");
+    	gets(admin);
+    	if(strcmp(admin,"utesalamejor") == 0){
+    		system("cls");
+			printf("\nEnhorabuena, eres el administrador\n\n");
+			arch=fopen("usuario.dat","rb");
+			if (arch==NULL)
+			exit(1);
+			matriculacion usuario;
+			fread(&usuario, sizeof(matriculacion), 1, arch);
+    		    while(!feof(arch))
+    			{
+        			printf("Matricula %d: %s\t Contrasena %d: %s\n\n", numero,usuario.matricula,numero,usuario.contrasena);
+        			numero++;
+        			fread(&usuario, sizeof(matriculacion), 1, arch);
+    			}
+    			fclose(arch);
+    			salida=3;
+    	}
+    	else{
+    		printf("\nLa contrasena digitada es incorrecta, intente nuevamente (intentos restantes %d)\n", intentos--);
+    		salida++;
+    	}
+    }
+	}
+    continuar();
+}
+
 
 
 void main(){
-	int op,exit=1;
-	while(exit==1){
-	printf("\n\nIntroduzca una opcion\n1- Escribir\n2- Leer\n3- Ingresar contrasena\n4- Salir\n\n");
-	scanf("%d", &op);
-	switch(op){
-	case 1:
-		registro();
-		break;
-	case 2:
-		lectura();
-		break;
-	case 3:
-		ingresar();
-		break;
-	case 4:
-		exit=2;
-		break;
-	}
+	FILE *arch;
+    arch=fopen("productos.dat","wb");
+    if (arch==NULL)
+    exit(1);
+    fclose(arch);
+    
+	int opcion;
+	do{
+		printf("\t\tMENU\n\n1- Registrar usuario y contrasena\n2- Ver usuarios\n3- Salir\n");
+        printf("Ingrese su opcion:");
+        scanf("%i",&opcion);
+        switch (opcion) {
+            case 1: registro();
+                   break;
+            case 2: listado();
+            	break;
+        }
+    } while (opcion!=3);
 }
-}
-
-void lectura(){
-char p1;
-FILE *ar;
-if ((ar = fopen("ARCHIVO.txt", "r")) != NULL)
-{
-	printf("La informacion dentro del archivo es:\t");
-	while (feof(ar)==0)
-/* Se leen caracteres del archivo mientras no se detecte el fin del
-?archivo. */
-{
-p1 = fgetc(ar); /* Lee el caracter del archivo. */
-printf("%c",p1); /* Despliega el caracter en la pantalla. */
-}
-fclose(ar);
-}
-else
-printf("No se puede abrir el archivo");
-}
-
-int registro()
-{
-fflush(stdin);	
-FILE *ar;
-char cadena[150];
-char documento[]="ARCHIVO.txt";
-
-
-if ((ar = fopen(documento, "w")))
-    {
-    	printf("\nIntroduzca el nuevo texto: \n");
-        gets(cadena);
-        fprintf(ar, "%s", cadena);
-        fclose(ar);
-        printf("la cadena se ha actualizado exitosamente");
-        printf("\nla nueva cadena es: %s\n\n", cadena);
-    }
-fflush(stdin);	
-}
-
-int ingresar(){
-fflush(stdin);
-char p1,p2;
-FILE *ar;
-if ((ar = fopen("ARCHIVO.txt", "r")) != NULL)
-{
-	while (!feof(ar)==0)
-/* Se leen caracteres del archivo mientras no se detecte el fin del
-?archivo. */
-{
-p1 = fgetc(ar); /* Lee el caracter del archivo. */
-}
-	printf("Ingrese la contrasena:");
-	gets(&p2);
-	if (p1==p2)
-	printf("Tiene acceso");
-	else
-	printf("Clave incorrecta");
-fclose(ar);
-}
-else
-printf("No se puede abrir el archivo");
-}
-
