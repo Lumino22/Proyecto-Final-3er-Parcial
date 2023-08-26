@@ -1,9 +1,24 @@
+/*-----------------------------------------------------------------------------------------------------------
+|  Autor: Amiel Ramos y Erick Espinal            Matricula: Amiel: 1-20-1527, Erick: 1-20-2354               |
+|  Fecha: 26/8/2023                              Version: 1.9		                                        |
+|-----------------------------------------------------------------------------------------------------------|
+|  Descripci?n del Programa:                                                                                |
+|  Este programa esta encargado de registrar estudiantes con matriculas y contrasenas, los estudiantes      |
+ \  seran capaces de preseleccionar materias, carreras, cambiar contrasenas, ver el pensum, asi tambien    |
+\ 	el administrador tendra acceso a la informacion confidencial de cada uno de los estudiantes.          |
+| ----------------------------------------------------------------------------------------------------*/
+
+// Incluir E/S y Librer?as Standard
 #include<stdio.h>
 #include<conio.h>
 #include<stdlib.h>
 #include<string.h>
-#include "../include/libreria.h"
+#include "libreria.h"
 
+// Zona de Declaraci?n de variables globales
+int electrica=1,industrial=1,sistema=1,contabilidad=1,electronica=1,lenguas=1;;
+
+// Zona de Cabeceras de Procedimientos y Funciones
 typedef struct {
     int matricula; //Sirve para almacenar la matricula escogida
     char contrasena[20]; //Sirve para anadir o modificar la contrasena del usuario
@@ -25,6 +40,7 @@ void continuar()
 void registro()
 {
 	int carrera,exi=0;
+	char carr;
     FILE *arch;
     arch=fopen("usuario.dat","ab");
     if (arch==NULL)
@@ -130,6 +146,7 @@ void listado()
 
 
 void ingreso(){
+	int a=0;
     FILE *arch;
     arch=fopen("usuario.dat","rb");
     if (arch==NULL)
@@ -137,7 +154,7 @@ void ingreso(){
     printf("\nDigite una matricula existente para ingresar: ");
     int mat;
     scanf("%i", &mat);
-    char cont[20];
+    char cont[20],presel[30];
     matriculacion usuario;
     int hay=0;//La variable hay me ayudara a identificar si existe un alumno bajo la matricula ingresada
     fread(&usuario, sizeof(matriculacion), 1, arch);
@@ -156,11 +173,10 @@ void ingreso(){
            		int opt,ins;
            		fflush(stdin);
            		while(salir!=4){
-				fflush(stdin);
 				printf("\n1- Preseleccion\n2- Pago de cuotas\n3- Calificaciones\n4- Cerrar sesion\n\n");
 				scanf("%d",&opt);
 				switch(opt){
-				case 1:{
+				case 1:
 					fflush(stdin);
 					if(usuario.carrer==1){
 					printf("Usted estudia Ingenieria Electrica y esta en el ciclo:");
@@ -181,14 +197,13 @@ void ingreso(){
 					}
 				}
 					if(usuario.carrer==3){
-					printf("Usted estudia Ingenieria en sistema y le toca el ciclo: ");
+					printf("Usted estudia Ingenieria en sistema y le toca el ciclo %d", sistema++);
 					lectura2();
 					printf("\nDesea inscribir el proximo? 1- SI, 2- NO\n");
 					scanf("%d",&ins);
 					if(ins==1){
 					escritura2();
 					}
-				}
 				}
 					break;
 				case 2:
@@ -259,8 +274,9 @@ void contrasena(){
 }
 
 
-
+// Programa Principal
 void main(){
+	// Zona de Declaraci?n de Variables del Programa principal
 	FILE *arch;
     arch=fopen("productos.dat","wb");
     if (arch==NULL)
