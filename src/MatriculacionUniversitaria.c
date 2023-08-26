@@ -4,8 +4,6 @@
 #include<string.h>
 #include "libreria.h"
 
-int electrica=1,industrial=1,sistema=1,contabilidad=1,electronica=1,lenguas=1;;
-
 typedef struct {
     int matricula; //Sirve para almacenar la matricula escogida
     char contrasena[20]; //Sirve para anadir o modificar la contrasena del usuario
@@ -27,7 +25,6 @@ void continuar()
 void registro()
 {
 	int carrera,exi=0;
-	char carr;
     FILE *arch;
     arch=fopen("usuario.dat","ab");
     if (arch==NULL)
@@ -39,7 +36,7 @@ void registro()
     fflush(stdin);
     printf("Ingrese la contrasena: ");
     gets(usuario.contrasena);
-    printf("Ingrese el numero de la carrera universitaria a cursar: \n1- Ingenieria Electrica\n2- Ingenieria Industrial\n3- Ingieneria en sistema\n4- Contabilidad\n5- Ingenieria Electronica\n6- Lenguas Modernas\n\n");
+    printf("Ingrese el numero de la carrera universitaria a cursar: \n1- Ingenieria Electrica\n2- Ingenieria Industrial\n3- Ingieneria en sistema\n\n");
     scanf("%i",&carrera);
     while(exi==0){
     switch(carrera){
@@ -67,30 +64,6 @@ void registro()
     			usuario.ciclos=1;
     			exi=1;    		
     		break;
-    	case 4:
-    			fflush(stdin);
-				printf("Ha seleccionado Contabilidad\nPara confirmar, escriba *Contabilidad*: ");
-    			fgets(usuario.carrera,30,stdin);
-    			usuario.carrer=4;
-    			usuario.ciclos=1;
-    			exi=1;
-    		break;
-    	case 5:
-    			fflush(stdin);
-				printf("Ha seleccionado Ingenieria Electronica\nPara confirmar, escriba *Ingenieria Electronica*: ");
-    			fgets(usuario.carrera,30,stdin);
-    			usuario.carrer=5;
-    			usuario.ciclos=1;
-    			exi=1;
-    		break;
-    	case 6:
-    			fflush(stdin);
-				printf("Ha seleccionado Lenguas Modernas\nPara confirmar, escriba *Lenguas Modernas*: ");
-    			fgets(usuario.carrera,30,stdin);
-    			usuario.carrer=6;
-    			usuario.ciclos=1;
-    			exi=1;
-			break;	
     	default: printf("La opcion seleccionada es invalida");
 	}
 	}
@@ -157,7 +130,6 @@ void listado()
 
 
 void ingreso(){
-	int a=0;
     FILE *arch;
     arch=fopen("usuario.dat","rb");
     if (arch==NULL)
@@ -165,7 +137,7 @@ void ingreso(){
     printf("\nDigite una matricula existente para ingresar: ");
     int mat;
     scanf("%i", &mat);
-    char cont[20],presel[30];
+    char cont[20];
     matriculacion usuario;
     int hay=0;//La variable hay me ayudara a identificar si existe un alumno bajo la matricula ingresada
     fread(&usuario, sizeof(matriculacion), 1, arch);
@@ -181,34 +153,52 @@ void ingreso(){
            if(resultado==0){
            	system("cls");
            	printf("Ha accedido exitosamente\n\n\tMENU INTERNO\n");
-           		int opt;
+           		int opt,ins;
            		fflush(stdin);
+           		while(salir!=4){
+				fflush(stdin);
 				printf("\n1- Preseleccion\n2- Pago de cuotas\n3- Calificaciones\n4- Cerrar sesion\n\n");
 				scanf("%d",&opt);
 				switch(opt){
-				case 1:
+				case 1:{
 					fflush(stdin);
 					if(usuario.carrer==1){
-					printf("Usted estudia Ingenieria Electrica y le toca el ciclo %d", usuario.ciclos++);
-					ciclos(a);
+					printf("Usted estudia Ingenieria Electrica y esta en el ciclo:");
+					lectura();
+					printf("\nDesea inscribir el proximo? 1- SI, 2- NO\n");
+					scanf("%d",&ins);
+					if(ins==1){
+					escritura();
+					}
 				}
-					if(usuario.carrer==2)
-					printf("Usted estudia Ingenieria Industrial y le toca el ciclo %d", industrial++);
-					if(usuario.carrer==3)
-					printf("Usted estudia Ingenieria en sistema y le toca el ciclo %d", sistema++);
-					if(usuario.carrer==4)
-					printf("Usted estudia Contabilidad y le toca el ciclo %d", 5);
-					if(usuario.carrer==5)
-					printf("Usted estudia Ingenieria Electronica y le toca el ciclo %d", 5);
-					if(usuario.carrer==6)
-					printf("Usted estudia Lenguas Modernas y le toca el ciclo %d", 5);
-					salir=1;
+					if(usuario.carrer==2){
+					printf("Usted estudia Ingenieria Industrial y esta en el ciclo:");
+					lectura1();
+					printf("\nDesea inscribir el proximo? 1- SI, 2- NO\n");
+					scanf("%d",&ins);
+					if(ins==1){
+					escritura1();
+					}
+				}
+					if(usuario.carrer==3){
+					printf("Usted estudia Ingenieria en sistema y le toca el ciclo: ");
+					lectura2();
+					printf("\nDesea inscribir el proximo? 1- SI, 2- NO\n");
+					scanf("%d",&ins);
+					if(ins==1){
+					escritura2();
+					}
+				}
+				}
 					break;
 				case 2:
 					break;
 				case 3:
 					break;
-				}
+				case 4:
+					salir=4;
+					break;
+				}}
            }
            else
             printf("Contrasena incorrecta\n");
