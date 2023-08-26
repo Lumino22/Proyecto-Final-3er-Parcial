@@ -4,7 +4,7 @@
 #include<string.h>
 
 typedef struct {
-    char matricula[10];
+    int matricula;
     char contrasena[20];
 } matriculacion;
 
@@ -25,10 +25,11 @@ void registro()
         exit(1);
     matriculacion usuario;
     fflush(stdin);
-    printf("Ingrese la matricula del usuario:");
-    gets(usuario.matricula);
-    printf("Ingrese la contrasena:");
-    scanf("%s",&usuario.contrasena);
+    printf("Ingrese la matricula del usuario (sin espacios/guiones): ");
+    scanf("%i",&usuario.matricula);
+    fflush(stdin);
+    printf("Ingrese la contrasena: ");
+    gets(usuario.contrasena);
     fwrite(&usuario, sizeof(matriculacion), 1, arch);
     fclose(arch);
     continuar();
@@ -50,7 +51,7 @@ void listado()
     printf("\n\tEl listado de matriculas es:\n\n");
     while(!feof(arch))
     {
-        printf("Matricula %d: %s \n\n", numero,usuario.matricula);
+        printf("Matricula %d: %i \n\n", numero,usuario.matricula);
         numero++;
         fread(&usuario, sizeof(matriculacion), 1, arch);
     }
@@ -74,7 +75,7 @@ void listado()
 			fread(&usuario, sizeof(matriculacion), 1, arch);
     		    while(!feof(arch))
     			{
-        			printf("Matricula %d: %s\t Contrasena %d: %s\n\n", numero,usuario.matricula,numero,usuario.contrasena);
+        			printf("Matricula %d: %i\t Contrasena %d: %s\n\n", numero,usuario.matricula,numero,usuario.contrasena);
         			numero++;
         			fread(&usuario, sizeof(matriculacion), 1, arch);
     			}
@@ -91,6 +92,42 @@ void listado()
 }
 
 
+void ingreso(){
+    FILE *arch;
+    arch=fopen("usuario.dat","rb");
+    if (arch==NULL)
+        exit(1);
+    printf("Digite una matricula existente para ingresar: ");
+    int mat;
+    scanf("%i", &mat);
+    char cont[20];
+    matriculacion usuario;
+    int hay=0;//La variable hay me ayudara a identificar si existe un alumno bajo la matricula ingresada
+    fread(&usuario, sizeof(matriculacion), 1, arch);
+    while(!feof(arch))
+    {
+        if (mat==usuario.matricula)
+        {
+        	fflush(stdin);
+           printf("Digite su contrasena: ");
+           gets(cont);
+           int resultado=strcmp(cont,usuario.contrasena);
+           if(resultado==0)
+           	printf("Ha accedido exitosamente\n");
+           else
+            printf("Contrasena incorrecta\n");
+            hay=1;
+            break;
+        }
+        fread(&usuario, sizeof(matriculacion), 1, arch);
+    }
+    if (hay==0)
+        printf("No existe un usuario con dicha matricula\n");
+    fclose(arch);
+    
+    continuar();
+}
+
 
 void main(){
 	FILE *arch;
@@ -101,7 +138,7 @@ void main(){
     
 	int opcion;
 	do{
-		printf("\t\tMENU\n\n1- Registrar usuario y contrasena\n2- Ver usuarios\n3- Salir\n");
+		printf("\t\tMENU\n\n1- Registrar usuario y contrasena\n2- Ver usuarios\n3- Ingresar\n4- Salir\n");
         printf("Ingrese su opcion:");
         scanf("%i",&opcion);
         switch (opcion) {
@@ -109,6 +146,8 @@ void main(){
                    break;
             case 2: listado();
             	break;
+            case 3: ingreso();
+            	break;
         }
-    } while (opcion!=3);
+    } while (opcion!=4);
 }
