@@ -2,7 +2,7 @@
 #include<conio.h>
 #include<stdlib.h>
 #include<string.h>
-#include "libreria.h"
+#include "../include/libreria.h"
 
 typedef struct {
     int matricula; //Sirve para almacenar la matricula escogida

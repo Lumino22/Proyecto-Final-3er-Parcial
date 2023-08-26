@@ -1,4 +1,4 @@
-#include "menuinterno.c"
+#include "../src/menuinterno.c"
 
 void pensum();
 void lectura();
